@@ -8,8 +8,7 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 class NeuralNetwork:
 	#Initialize model parameters:
-	def initialize_model_params(self, ip_data, n_input_nodes, n_nodes_h1, n_classes, batch_size, epoch, learning_rate, mini_batch_size):
-		self.ip_data = ip_data
+	def initialize_model_params(self, n_input_nodes, n_nodes_h1, n_classes, batch_size, epoch, learning_rate, mini_batch_size):
 		self.n_input_nodes = n_input_nodes
 		self.n_nodes_h1 = n_nodes_h1
 		self.n_classes = n_classes
@@ -35,13 +34,13 @@ class NeuralNetwork:
 	def feed_forward(self, input_data):
 
 		layer_1 = tf.add(tf.matmul(input_data, self.hidden_layer1['weights']) , self.hidden_layer1['bias'])
-		layer_1 = tf.nn.sigmoid(layer_1)                                                           ` 
+		layer_1 = tf.nn.sigmoid(layer_1)
 		output_layer = tf.matmul(layer_1, self.output_layer['weights']) + self.output_layer['bias']
 		
 		return output_layer
 	
 #Train the network
-	def train_network(self):
+	def train_network(self, train_data):
 	
 		predicted_val = self.feed_forward(self.x)
 		cost = tf.nn.softmax_cross_entropy_with_logits(predicted_val, self.y)
@@ -52,19 +51,19 @@ class NeuralNetwork:
 			for epoch in range(self.epoch):
 				epoch_loss = 0
 				for i in range(self.mini_batch_size):
-					epoch_x, epoch_y = self.ip_data.train.next_batch(batch_size)
+					epoch_x, epoch_y = train_data.next_batch(batch_size)
 					_, c = sess.run([optimizer, cost], feed_dict= {self.x:epoch_x, self.y:epoch_y})
 					epoch_loss += c
 				print 'epoch', epoch_loss
 						
 
-	def test_model(self):
+	def test_model(self, test_data):
 		with tf.Session() as sess:
 			sess.run(tf.initialize_all_variables())
 			predicted_val = self.feed_forward(self.x)
 			correct_prediction = tf.equal(tf.argmax(predicted_val,1), tf.argmax(self.y,1))
 			accuracy = tf.reduce_mean(tf.cast(correct_prediction, 'float'))
-			print('acc', accuracy.eval({self.x: self.ip_data.test.images, self.y: self.ip_data.test.labels}))		
+			print('acc', accuracy.eval({self.x: test_data.images, self.y: test_data.labels}))		
 				
 
 if __name__ == '__main__':
@@ -83,15 +82,15 @@ if __name__ == '__main__':
 	
 	print 'Initializing parameters'
 	#Initalize model parameters
-	obj_bp.initialize_model_params(mnist, n_input_nodes , n_nodes_h1, n_classes, batch_size, epochs, learning_rate, mini_batch_size)
+	obj_bp.initialize_model_params(n_input_nodes , n_nodes_h1, n_classes, batch_size, epochs, learning_rate, mini_batch_size)
 	print 'Network params initialized'
 	
 	print 'Training the model'
 	#Train the network
-	obj_bp.train_network()
+	obj_bp.train_network(mnist.train)
 	
 	print 'Testing the model'
 	#Test the network
-	obj_bp.test_model()
+	obj_bp.test_model(mnist.test)
 	print 'Done'
 	
