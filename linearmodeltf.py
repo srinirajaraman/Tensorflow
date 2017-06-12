@@ -30,7 +30,7 @@ class LinearModel:
 		output_layer = tf.add(tf.matmul(input_data, self.hidden_layer1['weights']) , self.hidden_layer1['bias'])
 		return output_layer
 		
-	def train_network(self, train_X, train_Y):
+	def train_network(self, train_X, train_Y, test_X, test_Y):
 		predicted_val = self.feed_forward(self.x)
 		cost = tf.reduce_mean(tf.pow(predicted_val-self.y, 2)/self.n_samples)
 		optimizer = tf.train.AdamOptimizer(self.learning_rate).minimize(cost)
