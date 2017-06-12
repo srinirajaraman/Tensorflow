@@ -5,5 +5,6 @@
 	* Hello World
 	* Add two numbers 
 	* Add two matrices
-## Tensorflow package credits: http://tensorflow.org/
-## MNIST datset:  http://yann.lecun.com/exdb/mnist
+## References:
+### Tensorflow package credits: http://tensorflow.org/
+### MNIST datset:  http://yann.lecun.com/exdb/mnist
